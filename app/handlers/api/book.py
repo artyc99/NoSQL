@@ -1,8 +1,9 @@
 from flask import Blueprint, Response, request
 
 from ..responses import ApiResponse
-from ...database.library import get_books, insert_book, delete_book, get_book
+from ...database.library import get_books, insert_book, delete_book, get_book, update_book
 from ...models.library import Book
+from ...parsers.book import request_parse
 
 book = Blueprint('book', __name__, url_prefix='/book')
 
@@ -19,16 +20,19 @@ def get_all(book_id: str = '') -> Response:
 
 @book.route('', methods=['POST'])
 def add() -> Response:
-    test = insert_book(Book())
-    print(request.json)
-    return ApiResponse.response200({'test': 'test', 'test2': 'test2'})
+    data = request.json
+    test = insert_book(Book(
+        title=data['title'],
+        description=data['description']
+    ))
+    return ApiResponse.response200({'result': test})
 
 
-@book.route('<book_id>', methods=['PUT'])
+@book.route('<book_id>', methods=['PUT', 'UPDATE'])
 def update(book_id) -> Response:
     # test = get_books()
     print(request.json, request.args)
-    return ApiResponse.response200({'test': 'test', 'test2': 'test2'})
+    return ApiResponse.response200(update_book(book_id, request_parse(request.json)))
 
 
 @book.route('<book_id>', methods=['DELETE'])

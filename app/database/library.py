@@ -12,6 +12,8 @@ def insert_book(book: Book):
         with db_session.start_transaction():
             __MONGO_DB_CONNECTION['api']['library'].insert_one(book.to_dict(), session=db_session)
 
+    return True
+
 
 def get_books():
     results = []
@@ -27,13 +29,38 @@ def get_book(book_id: str):
 
     with __MONGO_DB_CONNECTION.start_session() as db_session:
         with db_session.start_transaction():
-            results = mongo_parse(__MONGO_DB_CONNECTION['api']['library'].find_one({'_id': ObjectId(book_id)})).to_dict_with_id()
-    return {'results': results}
+            mongo_result = __MONGO_DB_CONNECTION['api']['library'].find_one({'_id': ObjectId(book_id)})
+
+            if mongo_result:
+                result = mongo_parse(mongo_result).to_dict_with_id()
+    return {'result': result}
+
+
+def update_book(book_id, book):
+    result = {}
+
+    with __MONGO_DB_CONNECTION.start_session() as db_session:
+        with db_session.start_transaction():
+            mongo_result = __MONGO_DB_CONNECTION['api']['library'].find_one_and_update(
+                {"_id": ObjectId(book_id)},
+                {
+                    "$set":
+                    {
+                        "title": book.title,
+                        'description': book.description
+                    }
+                }, upsert=True
+            )
+
+            if mongo_result:
+                result = mongo_parse(mongo_result).to_dict_with_id()
+
+    return {'result': result}
 
 
 def delete_book(book_id: str):
     with __MONGO_DB_CONNECTION.start_session() as db_session:
         with db_session.start_transaction():
-            __MONGO_DB_CONNECTION['api']['library'].delete_one({'_id': book_id})
+            __MONGO_DB_CONNECTION['api']['library'].delete_one({'_id': ObjectId(book_id)})
 
     return True
