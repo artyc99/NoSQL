@@ -32,7 +32,7 @@ def create_index(es_object, index_name='books'):
         }
     }
     try:
-        if not es_object.indices.exists(index_name):
+        if not es_object.indices.exists(index=index_name):
             es_object.indices.create(index=index_name, ignore=400, body=settings)
             print('Created Index')
         created = True

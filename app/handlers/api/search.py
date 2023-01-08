@@ -1,7 +1,7 @@
 from flask import Blueprint, Response, request
 
 from ..responses import ApiResponse
-from ...elasticsearch import es
+# from ...elasticsearch import es
 
 search = Blueprint('search', __name__, url_prefix='/search')
 
