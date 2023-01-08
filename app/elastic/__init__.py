@@ -1,8 +1,8 @@
 from elasticsearch import Elasticsearch
 
-es = Elasticsearch([{'host': 'localhost', 'port': 9200, "scheme": "http"}])
+elastic_connection = Elasticsearch([{'host': 'localhost', 'port': 9200, "scheme": "http"}])
 
-if es.ping():
+if elastic_connection.ping():
     print('Elastic Connect')
 else:
     raise 'No Elastic Connection'
@@ -42,4 +42,4 @@ def create_index(es_object, index_name='books'):
         return created
 
 
-print(f'Elastic index creating: {create_index(es)}')
+print(f'Elastic index creating: {create_index(elastic_connection)}')

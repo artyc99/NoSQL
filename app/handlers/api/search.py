@@ -1,13 +1,11 @@
 from flask import Blueprint, Response, request
 
 from ..responses import ApiResponse
-# from ...elasticsearch import es
+from ...elastic.library import get_book
 
 search = Blueprint('search', __name__, url_prefix='/search')
 
 
 @search.route('', methods=['POST'])
 def get_all() -> Response:
-    # test = get_books()
-    print(request.args, request.json)
-    return ApiResponse.response200({'test': 'test', 'test2': 'test2'})
+    return ApiResponse.response200({'res': get_book(request.json['description'])})

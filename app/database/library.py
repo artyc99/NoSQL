@@ -3,6 +3,7 @@ from bson import ObjectId
 from . import mongo_db_connection
 from ..models.library import Book
 from ..parsers.book import mongo_parse
+from ..elastic import library as el_s
 
 __MONGO_DB_CONNECTION = mongo_db_connection
 
@@ -10,9 +11,12 @@ __MONGO_DB_CONNECTION = mongo_db_connection
 def insert_book(book: Book):
     with __MONGO_DB_CONNECTION.start_session() as db_session:
         with db_session.start_transaction():
-            __MONGO_DB_CONNECTION['api']['library'].insert_one(book.to_dict(), session=db_session)
+            book.book_id = __MONGO_DB_CONNECTION['api']['library'].insert_one(book.to_dict(), session=db_session).inserted_id
 
-    return True
+    if book.book_id:
+        el_s.insert_book(book)
+
+    return mongo_parse(book).to_dict_with_id()
 
 
 def get_books():
@@ -55,6 +59,8 @@ def update_book(book_id, book):
             if mongo_result:
                 result = mongo_parse(mongo_result).to_dict_with_id()
 
+                update_book(book_id, book)
+
     return {'result': result}
 
 
@@ -62,5 +68,7 @@ def delete_book(book_id: str):
     with __MONGO_DB_CONNECTION.start_session() as db_session:
         with db_session.start_transaction():
             __MONGO_DB_CONNECTION['api']['library'].delete_one({'_id': ObjectId(book_id)})
+
+            delete_book(book_id)
 
     return True
