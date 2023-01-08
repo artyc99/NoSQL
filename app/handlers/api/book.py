@@ -1,7 +1,7 @@
 from flask import Blueprint, Response, request
 
 from ..responses import ApiResponse
-from ...database.library import get_books, insert_book, delete_book
+from ...database.library import get_books, insert_book, delete_book, get_book
 from ...models.library import Book
 
 book = Blueprint('book', __name__, url_prefix='/book')
@@ -11,7 +11,7 @@ book = Blueprint('book', __name__, url_prefix='/book')
 @book.route('<book_id>', methods=['GET'])
 def get_all(book_id: str = '') -> Response:
     if book_id:
-        response = {}
+        response = get_book(book_id)
     else:
         response = get_books()
     return ApiResponse.response200(response)
@@ -33,7 +33,4 @@ def update(book_id) -> Response:
 
 @book.route('<book_id>', methods=['DELETE'])
 def delete(book_id) -> Response:
-    # test = get_books()
-
-    print(request.json, request.args)
-    return ApiResponse.response200({'result': delete_book(None)})
+    return ApiResponse.response200({'result': delete_book(book_id)})

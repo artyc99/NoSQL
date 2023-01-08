@@ -19,11 +19,19 @@ def get_books():
     with __MONGO_DB_CONNECTION.start_session() as db_session:
         with db_session.start_transaction():
             results = [mongo_parse(item).to_dict_with_id() for item in __MONGO_DB_CONNECTION['api']['library'].find()]
-            # print([item for item in __MONGO_DB_CONNECTION['api']['library'].find()])
     return {'results': results}
 
 
-def delete_book(book_id):
+def get_book(book_id: str):
+    result = {}
+
+    with __MONGO_DB_CONNECTION.start_session() as db_session:
+        with db_session.start_transaction():
+            results = mongo_parse(__MONGO_DB_CONNECTION['api']['library'].find_one({'_id': ObjectId(book_id)})).to_dict_with_id()
+    return {'results': results}
+
+
+def delete_book(book_id: str):
     with __MONGO_DB_CONNECTION.start_session() as db_session:
         with db_session.start_transaction():
             __MONGO_DB_CONNECTION['api']['library'].delete_one({'_id': book_id})
