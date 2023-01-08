@@ -18,7 +18,7 @@ class Book(Generic[__BookType]):
 
     def to_dict_with_id(self) -> Dict:
         return {
-            '_id': self.book_id,
+            '_id': str(self.book_id),
             'title': self.title,
             'description': self.description
         }
