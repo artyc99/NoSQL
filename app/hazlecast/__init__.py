@@ -1,16 +1,17 @@
 from hazelcast import HazelcastClient
 
-hz_client = HazelcastClient()
 
-map = None
+class Cash:
+    def __init__(self):
+        self.hz_client = HazelcastClient(
+            cluster_name="dev",
+            cluster_members=[
+                "localhost:8080"
+            ]
+        )
 
+    def get(self):
+        return self.hz_client.get_map('books').blocking()
 
-def create():
-    map = hz_client.get_map('books').blocking()
-
-
-def close():
-    hz_client.shutdown()
-
-
-create()
+    def close(self):
+        self.hz_client.shutdown()

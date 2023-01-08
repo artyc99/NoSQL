@@ -2,10 +2,11 @@ from elasticsearch import Elasticsearch
 
 elastic_connection = Elasticsearch([{'host': 'localhost', 'port': 9200, "scheme": "http"}])
 
-if elastic_connection.ping():
-    print('Elastic Connect')
-else:
-    raise 'No Elastic Connection'
+# if elastic_connection.ping():
+#     print('Elastic Connect')
+# else:
+#     print('No elastic')
+    # raise 'No Elastic Connection'
 
 
 def create_index(es_object, index_name='books'):
@@ -42,4 +43,4 @@ def create_index(es_object, index_name='books'):
         return created
 
 
-print(f'Elastic index creating: {create_index(elastic_connection)}')
+# print(f'Elastic index creating: {create_index(elastic_connection)}')
