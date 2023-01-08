@@ -1,0 +1,10 @@
+
+# Coding trash
+/.idea/
+/venv/
+
+# Mypy chash
+/.mypy_cache/
+
+# Lint reports
+./lint_report.txt
